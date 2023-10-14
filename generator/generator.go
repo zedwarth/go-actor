@@ -1,13 +1,15 @@
-package printer
+package generator
 
 import (
-	"fmt"
+	"math/rand"
 	"time"
+
+	"github.com/zedwarth/go-actor/printer"
 )
 
 type Message struct {
-	Tick   time.Time
-	Number int
+	Tick    time.Time
+	Printer *printer.Actor
 }
 
 type Actor struct {
@@ -33,5 +35,15 @@ func (a *Actor) Send(message Message) {
 }
 
 func handler(message Message) {
-	fmt.Println("Tick:", message.Tick, "Number:", message.Number)
+	message.Printer.Send(printer.Message{
+		Tick:   message.Tick,
+		Number: numberGenerator(),
+	})
+}
+
+func numberGenerator() int {
+	mean := 50.0
+	stddev := 100.0
+	n := int(rand.NormFloat64()*stddev + mean)
+	return n
 }

@@ -3,20 +3,23 @@ package main
 import (
 	"time"
 
+	"github.com/zedwarth/go-actor/generator"
 	"github.com/zedwarth/go-actor/printer"
 )
 
 func main() {
-	p := printer.NewPrinterActor()
+	p := printer.NewActor(10)
 	p.Start()
 
-	for i := 0; i < 100; i++ {
-		message := printer.PrinterMessage{
-			Tick:   time.Now(),
-			Number: i,
-		}
-		p.Send(message)
-	}
+	g := generator.NewActor(10)
+	g.Start()
 
-	select {}
+	ticker := time.Tick(time.Second)
+
+	for tick := range ticker {
+		g.Send(generator.Message{
+			Printer: p,
+			Tick:    tick,
+		})
+	}
 }
