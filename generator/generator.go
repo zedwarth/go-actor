@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"math"
 	"math/rand"
 	"time"
 
@@ -37,13 +38,13 @@ func (a *Actor) Send(message Message) {
 func handler(message Message) {
 	message.Printer.Send(printer.Message{
 		Tick:   message.Tick,
-		Number: numberGenerator(),
+		Number: numberGenerator(50, 15),
 	})
 }
 
-func numberGenerator() int {
-	mean := 50.0
-	stddev := 100.0
-	n := int(rand.NormFloat64()*stddev + mean)
-	return n
+func numberGenerator(mean float64, standardDeviation float64) int {
+	value := rand.NormFloat64()*standardDeviation + mean
+	value = math.Max(0, math.Min(100, value))
+
+	return int(value)
 }
